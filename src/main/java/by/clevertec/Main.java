@@ -309,7 +309,7 @@ public class Main {
                 .sorted(Comparator.comparing(Flower::getOrigin).reversed()
                         .thenComparing(Comparator.comparing(Flower::getPrice).reversed())
                         .thenComparing(Comparator.comparing(Flower::getWaterConsumptionPerDay).reversed()))
-                .filter(flower -> Arrays.asList("A", "S", "C", "D").contains(String.valueOf(flower.getCommonName().charAt(0)).toUpperCase()))
+                .filter(flower -> flower.getCommonName().matches("^[C-S].*"))
                 .filter(flower -> flower.isShadePreferred() && flower.getFlowerVaseMaterial().containsAll(Arrays.asList("Glass", "Aluminum", "Steel")))
                 .mapToDouble(flower -> {
                     double wateringCost = flower.getWaterConsumptionPerDay() * 365 * wateringPeriodInYears / 1000.0 * waterCostPerCubicMeter;

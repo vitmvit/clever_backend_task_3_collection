@@ -215,11 +215,13 @@ public class Main {
                     LocalDate age18 = now.minusYears(18);
                     LocalDate age60 = now.minusYears(60);
                     return person.getDateOfBirth().isAfter(age18) || person.getDateOfBirth().isBefore(age60);
-                }).toList();
+                })
+                .toList();
 
         List<Person> hospitalPerson = houses.stream()
                 .filter(house -> house.getBuildingType().equals("Hospital"))
-                .flatMap(house -> house.getPersonList().stream()).toList();
+                .flatMap(house -> house.getPersonList().stream())
+                .toList();
 
         Stream.concat(persons.stream(), hospitalPerson.stream())
                 .limit(500)
@@ -381,19 +383,19 @@ public class Main {
     public static void task20() {
         List<Student> students = Util.getStudents();
         List<Examination> examinations = Util.getExaminations();
-        Map<String, Double> averageGradeByFaculty = students.stream()
+        Optional<Object> res = students.stream()
                 .collect(Collectors.groupingBy(Student::getFaculty, Collectors.averagingDouble(student -> {
                     Examination exam = examinations.stream()
                             .filter(e -> e.getStudentId() == student.getId())
                             .findFirst()
                             .orElse(null);
                     return (exam != null) ? exam.getExam1() : 0.0;
-                })));
-
-        String facultyWithMaxAverageGrade = Collections.max(averageGradeByFaculty.entrySet(), Map.Entry.comparingByValue())
-                .getKey();
-
-        System.out.println("Факультет с максимальной средней оценкой по первому экзамену: " + facultyWithMaxAverageGrade);
+                })))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey);
+        System.out.println("Факультет с максимальной средней оценкой по первому экзамену: " + res.get());
     }
 
     /**

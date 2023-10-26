@@ -245,7 +245,9 @@ public class Main {
     public static void task14() {
         List<Car> cars = Util.getCars();
         double transportCostPerTon = 7.14;
-        Map<String, List<Car>> carsByCountry = cars.stream()
+        Map<String, Integer> totalMassByCountry = new HashMap<>();
+        Map<String, Double> totalTransportCostByCountry = new HashMap<>();
+        cars.stream()
                 .collect(Collectors.groupingBy(car -> {
                     if (car.getCarMake().equals("Jaguar") || car.getColor().equals("White")) {
                         return "Туркменистан";
@@ -262,20 +264,17 @@ public class Main {
                     } else {
                         return "";
                     }
-                }));
-        Map<String, Integer> totalMassByCountry = new HashMap<>();
-        Map<String, Double> totalTransportCostByCountry = new HashMap<>();
-        carsByCountry.forEach((country, countryCars) -> {
-            if (!country.isEmpty()) {
-                int totalMass = countryCars.stream()
-                        .mapToInt(Car::getMass)
-                        .sum();
-                totalMassByCountry.put(country, totalMass);
+                })).forEach((country, countryCars) -> {
+                    if (!country.isEmpty()) {
+                        int totalMass = countryCars.stream()
+                                .mapToInt(Car::getMass)
+                                .sum();
+                        totalMassByCountry.put(country, totalMass);
 
-                double transportCost = (totalMass / 1000.0) * transportCostPerTon;
-                totalTransportCostByCountry.put(country, transportCost);
-            }
-        });
+                        double transportCost = (totalMass / 1000.0) * transportCostPerTon;
+                        totalTransportCostByCountry.put(country, transportCost);
+                    }
+                });
 
         double totalRevenue = totalTransportCostByCountry.values().stream()
                 .mapToDouble(Double::doubleValue)
